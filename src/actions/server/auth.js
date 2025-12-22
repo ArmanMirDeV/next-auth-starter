@@ -7,6 +7,10 @@ export const postUser = async (payload)=>{
     console.log(payload);
 
 
+    // 0 - validation - password , name , mail 
+
+
+
     //1 - check user exists or not
     
     
@@ -43,6 +47,15 @@ export const postUser = async (payload)=>{
             
             success: true,
             message: `User Created with ${result.insertedId.toString()}`
+        }
+        
+    }
+
+    else{
+        return {
+            
+            success: false,
+            message: `Something went wrong. Please try again`
         }
     }
 

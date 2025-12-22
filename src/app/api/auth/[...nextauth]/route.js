@@ -1,19 +1,17 @@
+import { dbConnect } from "@/lib/dbConnect";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-
+import bcrypt from "bcryptjs";
 
 // name, email, image
 
 const userList = [
-  {name: "hablu", password: "1234"},
-  {name: "dablu", password: "1234"},
-  {name: "bablu", password: "1234"},
-  {name: "lablu", password: "1234"},
-  {name: "mablu", password: "1234"},
-]
-
-
+  { name: "hablu", password: "1234" },
+  { name: "dablu", password: "1234" },
+  { name: "bablu", password: "1234" },
+  { name: "lablu", password: "1234" },
+  { name: "mablu", password: "1234" },
+];
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -25,24 +23,27 @@ export const authOptions = {
       // form inputs
 
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "Your Name" },
-        password: { label: "Password", type: "password", placeholder: "***********" },
-        secretCode: { label: "Secret Code", type: "number", placeholder:" Enter Code" },
+        email: { label: "email", type: "email", placeholder: "Enter Email" },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "***********",
+        },
       },
       async authorize(credentials, req) {
+        const { email, password } = credentials;
 
+        // const user = userList.find(u => u.name == username)
 
-        const {password, username, secretCode} = credentials;
+        const user = await dbConnect("users").findOne({ email });
 
-        const user = userList.find(u => u.name == username)
-        if(!user) return null;
+        if (!user) return null;
 
-        const isPasswordOkay = user.password == password;
+        const isPasswordOkay = await bcrypt.compare(password, user.password);
 
-        if(isPasswordOkay){
+        if (isPasswordOkay) {
           return user;
         }
-
 
         // my own login logic
 
@@ -52,6 +53,29 @@ export const authOptions = {
 
     // ...add more providers here
   ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
+    async session({ session, token, user }) {
+      if (token) {
+        session.role = token.role;
+      }
+
+      return session;
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (user) {
+        token.email = user.email;
+        token.role = user.role;
+      }
+
+      return token;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
