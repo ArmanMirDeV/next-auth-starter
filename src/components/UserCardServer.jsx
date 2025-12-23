@@ -1,18 +1,9 @@
-"use client";
-
-import { useSession } from "next-auth/react";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 
-const UserCard = () => {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return (
-      <div className="max-w-sm mx-auto p-6 rounded-xl shadow bg-gray-100 animate-pulse">
-        Loading user...
-      </div>
-    );
-  }
+const UserCardServer = async () => {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     return (
@@ -50,17 +41,13 @@ const UserCard = () => {
 
       {/* Footer */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">Session Status</span>
-        <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-          Authenticated
+        <span className="text-sm text-gray-500">Rendered On</span>
+        <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+          Server
         </span>
       </div>
-
-      <p className="mt-4 text-xs text-gray-400">
-        Expires on: {new Date(session.expires).toLocaleDateString()}
-      </p>
     </div>
   );
 };
 
-export default UserCard;
+export default UserCardServer;

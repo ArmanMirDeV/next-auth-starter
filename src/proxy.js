@@ -29,6 +29,10 @@ export async function proxy(req) {
     return NextResponse.rewrite.redirect(new URL("/forbidden", req.url));
   }
 
+
+
+
+
   console.log({ isAuthenticated, isUser, reqPath, isPrivate });
 
   //

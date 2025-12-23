@@ -2,6 +2,8 @@ import { dbConnect } from "@/lib/dbConnect";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import GoogleProvider from "next-auth/providers/google";
+
 
 // name, email, image
 
@@ -50,6 +52,13 @@ export const authOptions = {
         return null;
       },
     }),
+
+
+
+    GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET
+  })
 
     // ...add more providers here
   ],

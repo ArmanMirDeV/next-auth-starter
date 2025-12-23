@@ -8,6 +8,7 @@ import UserCard from "@/components/UserCard";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import AuthButtons from "@/components/AuthButtons";
+import UserCardServer from "@/components/UserCardServer";
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
@@ -32,8 +33,8 @@ export default async function Home() {
         
       </AuthButtons>
 
-      <h2 className="font-bold">User Server</h2>
-      <div className="border-2 p-4 rounded"> {JSON.stringify(session)} </div>
+<UserCardServer />
+    
     </div>
   );
 }
